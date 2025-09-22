@@ -4,12 +4,13 @@ import Home from './pages/Home'
 import CreateGame from './pages/CreateGame'
 import UpdateGame from './pages/UpdateGame'
 import NotFound from './pages/NotFound'
-
+import Navbar from './components/Navbar'
 function App() {
   
 
   return (
     <div>
+      <Navbar />
       <Routes>
         <Route path="/" element={<Home/>}/>
                 <Route path="/create" element={<CreateGame/>}/>
