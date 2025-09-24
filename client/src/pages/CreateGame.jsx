@@ -1,4 +1,5 @@
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
 import { useMutation } from "@tanstack/react-query";
 
@@ -17,7 +18,12 @@ function CreateGame() {
     const {register, handleSubmit, formState: {errors}} = useForm();
 
 
-    const { mutate } = useMutation({mutationFn: createGame })
+    const navigate = useNavigate();
+
+
+    const { mutate } = useMutation({mutationFn: createGame, onSuccess: () => {
+        navigate("/")
+    } })
 
 
 
