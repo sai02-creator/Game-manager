@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useForm} from "react-hook-form";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { useEffect } from "react";
 
 
@@ -18,8 +18,19 @@ function UpdateGame() {
         return response.json()
         };
 
+        async function editGame(updatedGame) {
+        const response = await fetch(`http://localhost:3000/api/games/${id}`, {
+        method: "PUT",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(updatedGame)
+        })
+        return response.json()
+        };    
+
 
       const { data, error, isLoading, isError } = useQuery({ queryKey: ["game", id], queryFn: fetchGame });
+
+      const { mutate } = useMutation({ mutationFn: editGame })
 
 
       useEffect(() => {
@@ -28,7 +39,11 @@ function UpdateGame() {
         }
       }, [data, reset]);
 
-      const onSubmit = () => {};
+      const onSubmit = (formData) => {
+        mutate({
+            name: formData.name, platform: formData.platform, genre: formData.genre
+        })
+      };
       
       if (isLoading) return <p className="page-container"> Loading game... </p>
             if (isError) return <p className="page-container"> Error: {error.message} </p>
@@ -55,7 +70,7 @@ function UpdateGame() {
                         {errors.genre && <p style={{ color: "red" }}> {errors.genre.message}</p>}
 
 
-            <button type="submit"> Create</button>
+            <button type="submit"> Update </button>
         </form>
     </div>
     );
