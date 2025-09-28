@@ -10,11 +10,32 @@ app.get("/api/games", (req, res) => {
     res.json(games)
 });
 
+
 app.post("/api/games", (req, res) => {
     const newGame = req.body
     games.push({...newGame, id: games.length + 1 });
     res.status(201).json(newGame);
 })
+app.put("/api/games/:id", (req, res) => {
+  const { id } = req.params;
+  const newUpdatedGame = req.body;
+
+  const index = games.findIndex((g) => g.id === Number(id));  
+   if (index === -1) {
+    return res.status(404).json({ error: "Game not found." });
+  }
+
+  games[index] = {
+    ...games[index],
+    name: newUpdatedGame.name,
+    platform: newUpdatedGame.platform,
+    genre: newUpdatedGame.genre,
+  };
+    res.json(games[index]);
+
+}); 
+    
+    
 app.get("/api/games/:id", (req, res) => {
   const { id } = req.params;
   const game = games.find((g) => g.id === Number(id));
