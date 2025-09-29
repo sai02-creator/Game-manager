@@ -1,12 +1,15 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useForm} from "react-hook-form";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 
 
 
 function UpdateGame() {
     const { id } = useParams();
+
+        const navigate = useNavigate();
+    const queryClient = useQueryClient();
 
         const {register,
                handleSubmit,
@@ -30,7 +33,12 @@ function UpdateGame() {
 
       const { data, error, isLoading, isError } = useQuery({ queryKey: ["game", id], queryFn: fetchGame });
 
-      const { mutate } = useMutation({ mutationFn: editGame })
+      const { mutate } = useMutation({ mutationFn: editGame, onSuccess: () => {
+        queryClient.invalidateQueries(["games"])
+        queryClient.invalidateQueries(["game", id])
+       // navigate("/")} 
+      }
+      })
 
 
       useEffect(() => {
