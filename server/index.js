@@ -9,9 +9,7 @@ app.use(express.json());
 app.use(cors());
 
 // === API Routes ===
-app.get("/api/games", (req, res) => {
-  res.json(games);
-});
+app.get("/api/games", (req, res) => res.json(games));
 
 app.post("/api/games", (req, res) => {
   const newGame = req.body;
@@ -22,11 +20,8 @@ app.post("/api/games", (req, res) => {
 app.put("/api/games/:id", (req, res) => {
   const { id } = req.params;
   const newUpdatedGame = req.body;
-
   const index = games.findIndex((g) => g.id === Number(id));
-  if (index === -1) {
-    return res.status(404).json({ error: "Game not found." });
-  }
+  if (index === -1) return res.status(404).json({ error: "Game not found." });
 
   games[index] = {
     ...games[index],
@@ -39,11 +34,8 @@ app.put("/api/games/:id", (req, res) => {
 
 app.delete("/api/games/:id", (req, res) => {
   const { id } = req.params;
-
   const index = games.findIndex((g) => g.id === Number(id));
-  if (index === -1) {
-    return res.status(404).json({ error: "Game not found." });
-  }
+  if (index === -1) return res.status(404).json({ error: "Game not found." });
 
   const deletedGame = games.splice(index, 1)[0];
   res.json(deletedGame);
@@ -52,28 +44,24 @@ app.delete("/api/games/:id", (req, res) => {
 app.get("/api/games/:id", (req, res) => {
   const { id } = req.params;
   const game = games.find((g) => g.id === Number(id));
-
-  if (!game) {
-    return res.status(404).json({ error: "Game not found." });
-  }
+  if (!game) return res.status(404).json({ error: "Game not found." });
 
   res.json(game);
 });
 
-// === Serve React Frontend ===
+// === Serve React Frontend (Vite) ===
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-app.use(express.static(path.join(__dirname, "../client/build")));
+// Serve static files from Vite build output
+app.use(express.static(path.join(__dirname, "../client/dist")));
 
-// Express 5 compatible catch-all route for frontend
+// Catch-all route for React frontend routing
 app.use((req, res, next) => {
   if (req.path.startsWith("/api")) return next(); // skip API routes
-  res.sendFile(path.join(__dirname, "../client/build", "index.html"));
+  res.sendFile(path.join(__dirname, "../client/dist", "index.html"));
 });
 
 // === Start Server ===
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
