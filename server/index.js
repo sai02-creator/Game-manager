@@ -56,9 +56,8 @@ const CLIENT_DIST = path.join(__dirname, "../client/dist");
 
 app.use(express.static(CLIENT_DIST));
 
-// Catch-all for React Router
-app.get("*", (req, res) => {
-  if (req.path.startsWith("/api")) return res.status(404).send("API route not found");
+// **Catch-all route for React Router (any route NOT starting with /api)**
+app.get(/^(?!\/api).*$/, (req, res) => {
   res.sendFile(path.join(CLIENT_DIST, "index.html"));
 });
 
