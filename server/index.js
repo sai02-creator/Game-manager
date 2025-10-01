@@ -66,8 +66,9 @@ const __dirname = path.dirname(__filename);
 
 app.use(express.static(path.join(__dirname, "../client/build")));
 
-// Express 5 compatible catch-all route
-app.get("/*", (req, res) => {
+// Express 5 compatible catch-all route for frontend
+app.use((req, res, next) => {
+  if (req.path.startsWith("/api")) return next(); // skip API routes
   res.sendFile(path.join(__dirname, "../client/build", "index.html"));
 });
 
