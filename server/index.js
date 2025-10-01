@@ -49,17 +49,17 @@ app.get("/api/games/:id", (req, res) => {
   res.json(game);
 });
 
-// === Serve React Frontend (Vite) ===
+// === Serve Vite Frontend ===
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const CLIENT_DIST = path.join(__dirname, "../client/dist");
 
-// Serve static files from Vite build output
-app.use(express.static(path.join(__dirname, "../client/dist")));
+app.use(express.static(CLIENT_DIST));
 
-// Catch-all route for React frontend routing
-app.use((req, res, next) => {
-  if (req.path.startsWith("/api")) return next(); // skip API routes
-  res.sendFile(path.join(__dirname, "../client/dist", "index.html"));
+// Catch-all for React Router
+app.get("*", (req, res) => {
+  if (req.path.startsWith("/api")) return res.status(404).send("API route not found");
+  res.sendFile(path.join(CLIENT_DIST, "index.html"));
 });
 
 // === Start Server ===
